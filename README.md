@@ -1,8 +1,6 @@
 # CangarooEndpointBase
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/cangaroo_endpoint_base`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Simple gem with a application helper to easily build wombat/cangaroo endpoints for system integrations.
 
 ## Installation
 
@@ -12,17 +10,36 @@ Add this line to your application's Gemfile:
 gem 'cangaroo_endpoint_base'
 ```
 
-And then execute:
+In your `.env`:
 
-    $ bundle
+```shell
+export ENDPOINT_BASIC_AUTH_TOKEN=123123
+```
 
-Or install it yourself as:
-
-    $ gem install cangaroo_endpoint_base
+This token will be used as the password for HTTP Basic authentication against this endpoint.
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+# application_controller.rb
+class ApplicationController < ActionController::API
+  include CangarooEndpointBase::ApplicationControllerHelper
+end
+
+# gift_cards_controller.rb
+class GiftCardsController < ApplicationController
+  def index
+    updated_after, updated_before = poll_timestamps_from_params
+
+    gift_card_poll_manager = GiftCardPollManager.new
+    gift_card_poll_manager.poll(GiftCard, last_poll: updated_after, updated_before: updated_before)
+
+    render json: { gift_cards: gift_card_poll_manager.updated_gift_cards }
+  end
+
+end
+
+```
 
 ## Development
 
