@@ -8,6 +8,7 @@ module CangarooEndpointBase
 
       http_basic_authenticate_with(
         name: '',
+        # TODO this should be a gem-level config
         password: ENV['ENDPOINT_BASIC_AUTH_TOKEN']
       )
 
@@ -24,6 +25,24 @@ module CangarooEndpointBase
 
       def reset_context
         log.reset_context!
+      end
+
+      def poll_timestamps_from_params
+        updated_after = last_poll_from_params
+        updated_before = updated_before_from_params_or_now
+
+        if updated_after >= updated_before
+          render json: "updated_since later than updated_before", status: :bad_request
+          return
+        end
+
+        [updated_after, updated_before]
+      end
+
+      def updated_before_from_params_or_now
+        return DateTime.now if params[:updated_before].nil?
+
+        Time.at(params[:updated_before].to_i).to_datetime
       end
 
       def last_poll_from_params
