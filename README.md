@@ -2,6 +2,11 @@
 
 Simple gem with a application helper to easily build wombat/cangaroo endpoints for system integrations.
 
+* Easily extract polling ranges (after, and time range) from params
+* Throw errors to Rollbar
+* Protect endpoint via HTTP basic auth
+* Reset logging context before processing action
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -50,4 +55,3 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/cangaroo_endpoint_base.
-
