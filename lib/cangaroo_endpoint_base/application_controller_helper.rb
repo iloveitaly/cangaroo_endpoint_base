@@ -29,6 +29,9 @@ module CangarooEndpointBase
 
       def poll_timestamps_from_params
         updated_after = last_poll_from_params
+
+        return if updated_after.nil?
+
         updated_before = updated_before_from_params_or_now
 
         if updated_after >= updated_before
