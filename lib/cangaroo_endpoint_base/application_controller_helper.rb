@@ -28,11 +28,11 @@ module CangarooEndpointBase
       end
 
       def poll_timestamps_from_params
-        updated_after = last_poll_from_params
+        updated_before = updated_before_from_params_or_now
+
+        updated_after = last_poll_from_params(allow_any: updated_before.present?)
 
         return if updated_after.nil?
-
-        updated_before = updated_before_from_params_or_now
 
         if updated_after >= updated_before
           render json: "updated_since later than updated_before", status: :bad_request
@@ -48,7 +48,7 @@ module CangarooEndpointBase
         Time.at(params[:updated_before].to_i).to_datetime
       end
 
-      def last_poll_from_params
+      def last_poll_from_params(allow_any: false)
         last_poll = Time.at(params[:last_poll].to_i).to_datetime rescue nil
 
         if last_poll.nil?
@@ -56,7 +56,8 @@ module CangarooEndpointBase
           return
         end
 
-        if Rails.env.production? && last_poll < 2.week.ago
+        # TODO the env based limitation should be optional
+        if !allow_any && Rails.env.production? && last_poll < 2.week.ago
           render json: "last poll should never be more than two weeks in the past", status: :bad_request
           return
         end
