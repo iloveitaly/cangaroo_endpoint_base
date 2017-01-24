@@ -15,10 +15,15 @@ module CangarooEndpointBase
       before_action :reset_context
 
       rescue_from StandardError do |exception|
+        # NOTE throw exceptions in test, otherwise failing tests won't fail loudly
+        if Rails.env.test? && exception.class != CangarooEndpointBase::UserError
+          raise(exception)
+        end
+
         Rollbar.error(exception) if defined?(::Rollbar)
 
         render json: { :error => exception.message }, status: :internal_server_error
-      end if !Rails.env.test?
+      end
     end
 
     protected
