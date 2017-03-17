@@ -41,9 +41,21 @@ class GiftCardsController < ApplicationController
 
     render json: { gift_cards: gift_card_poll_manager.updated_gift_cards }
   end
-
 end
 
+# rails_helper.rb
+require 'cangaroo_endpoint_base/spec/spec_helper'
+
+# controllers/customers_spec.rb
+RSpec.describe CustomersController, type: :controller do
+  before { setup_http_basic_auth }
+
+  it '#show' do
+    process :show, method: :get, params: { id: shopify_customer_id }
+
+    expect(parsed_response['id']).to_not be_nil
+  end
+end
 ```
 
 ## Development
