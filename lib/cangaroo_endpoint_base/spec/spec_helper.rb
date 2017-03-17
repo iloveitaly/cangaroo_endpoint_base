@@ -17,7 +17,7 @@ module CangarooEndpointBase
     end
 
     def read_fixture(name)
-      JSON.parse(File.read(File.join(Rails.root, "spec/support/fixtures/#{name}.json")))
+      JSON.parse(File.read(File.join(Rails.root, "spec/fixtures/#{name}.json")))
     end
   end
 end
